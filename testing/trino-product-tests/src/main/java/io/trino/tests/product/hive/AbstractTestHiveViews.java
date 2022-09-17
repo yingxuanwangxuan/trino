@@ -575,6 +575,18 @@ public abstract class AbstractTestHiveViews
         }
     }
 
+    @Test(groups = HIVE_VIEWS)
+    public void testHivePartitionViews()
+    {
+        onHive().executeQuery("DROP VIEW IF EXISTS hive_partition_view");
+        onHive().executeQuery("CREATE TABLE test_hive_partition(some_id varchar, ds varchar) WITH(FORMAT = 'Parquet', PARTITIONED_BY = array['ds'])");
+        onHive().executeQuery("INSERT INTO TABLE test_hive_partition VALUES ('1', '2022-09-17')");
+        onHive().executeQuery("CREATE VIEW hive_partition_view PARTITIONED ON (ds) as SELECT some_id, ds FROM test_hive_partition LIMIT 1");
+
+        String testQuery = "SELECT some_id, ds FROM hive_partition_view";
+        assertThat(onTrino().executeQuery(testQuery)).containsOnly(row("1", "2022-09-17"));
+    }
+
     /**
      * Test a Hive view that spans over Hive and Iceberg table when metastore does not contain an up to date information about table schema, requiring
      * any potential view translation to follow redirections.
