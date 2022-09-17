@@ -579,14 +579,14 @@ public abstract class AbstractTestHiveViews
     public void testHivePartitionViews()
     {
         onHive().executeQuery("DROP VIEW IF EXISTS hive_partition_view");
-        onHive().executeQuery("CREATE TABLE test_hive_partition(some_id varchar, ds varchar) WITH(FORMAT = 'Parquet', PARTITIONED_BY = array['ds'])");
+        onHive().executeQuery("CREATE TABLE test_hive_partition(some_id VARCHAR(25), ds VARCHAR(25)) WITH(PARTITIONED_BY = array['ds'])");
         onHive().executeQuery("INSERT INTO TABLE test_hive_partition VALUES ('1', '2022-09-17')");
         onHive().executeQuery("CREATE VIEW hive_partition_view PARTITIONED ON (ds) as SELECT some_id, ds FROM test_hive_partition LIMIT 1");
 
         String testQuery = "SELECT some_id, ds FROM hive_partition_view";
         assertThat(onTrino().executeQuery(testQuery)).containsOnly(row("1", "2022-09-17"));
-        onHive().executeQuery("DROP VIEW hive_partition_view");
-        onHive().executeQuery("DROP TABLE test_hive_partition");
+        onHive().executeQuery("DROP VIEW IF EXISTS hive_partition_view");
+        onHive().executeQuery("DROP TABLE IF EXISTS test_hive_partition");
     }
 
     /**
