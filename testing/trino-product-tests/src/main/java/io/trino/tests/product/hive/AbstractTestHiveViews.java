@@ -585,6 +585,8 @@ public abstract class AbstractTestHiveViews
 
         String testQuery = "SELECT some_id, ds FROM hive_partition_view";
         assertThat(onTrino().executeQuery(testQuery)).containsOnly(row("1", "2022-09-17"));
+        onHive().executeQuery("DROP VIEW hive_partition_view");
+        onHive().executeQuery("DROP TABLE test_hive_partition");
     }
 
     /**
