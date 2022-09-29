@@ -27,5 +27,7 @@ public interface CatalogFactory
 
     CatalogConnector createCatalog(CatalogProperties catalogProperties);
 
+    CatalogConnector deleteCatalog(String catalogName);
+
     CatalogConnector createCatalog(CatalogHandle catalogHandle, String connectorName, Connector connector);
 }

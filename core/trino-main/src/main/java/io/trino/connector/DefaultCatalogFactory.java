@@ -135,6 +135,12 @@ public class DefaultCatalogFactory
     }
 
     @Override
+    public CatalogConnector deleteCatalog(String catalogName) {
+        connectorFactories.remove(catalogName);
+        return null;
+    }
+
+    @Override
     public CatalogConnector createCatalog(CatalogHandle catalogHandle, String connectorName, Connector connector)
     {
         return createCatalog(catalogHandle, connectorName, connector, () -> {}, Optional.empty());

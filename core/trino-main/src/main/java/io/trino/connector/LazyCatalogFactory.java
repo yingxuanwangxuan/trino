@@ -56,4 +56,9 @@ public class LazyCatalogFactory
         checkState(catalogFactory != null, "Catalog factory is not set");
         return catalogFactory;
     }
+    @Override
+    public CatalogConnector deleteCatalog(String catalogName) {
+        getDelegate().deleteCatalog(catalogName);
+        return null;
+    }
 }

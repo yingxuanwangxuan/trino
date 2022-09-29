@@ -31,8 +31,10 @@ public class StaticCatalogManagerModule
     {
         configBinder(binder).bindConfig(StaticCatalogManagerConfig.class);
         binder.bind(StaticCatalogManager.class).in(Scopes.SINGLETON);
-        binder.bind(ConnectorServicesProvider.class).to(StaticCatalogManager.class).in(Scopes.SINGLETON);
-        binder.bind(CatalogManager.class).to(StaticCatalogManager.class).in(Scopes.SINGLETON);
+        binder.bind(DynamicCatalogPropertiesManager.class).in(Scopes.SINGLETON);
+        configBinder(binder).bindConfig(DynamicCatalogPropertiesConfig.class);
+        binder.bind(CatalogManager.class).to(DynamicCatalogPropertiesManager.class).in(Scopes.SINGLETON);
+        binder.bind(ConnectorServicesProvider.class).to(DynamicCatalogPropertiesManager.class).in(Scopes.SINGLETON);
 
         binder.bind(LazyRegister.class).asEagerSingleton();
     }

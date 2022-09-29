@@ -142,6 +142,37 @@ public class StaticCatalogManager
         }
     }
 
+    public void loadCatalogByName(CatalogProperties catalog)
+    {
+            String catalogName = catalog.getCatalogHandle().getCatalogName();
+            log.info("-- Loading catalog %s --", catalogName);
+            CatalogConnector newCatalog = catalogFactory.createCatalog(catalog);
+            catalogs.put(catalogName, newCatalog);
+            log.info("-- Added catalog %s using connector %s --", catalogName, catalog.getConnectorName());
+    }
+
+    public void addCatalogProperties(CatalogProperties catalog)
+    {
+        catalogProperties.add(catalog);
+    }
+
+    public void deleteCatalogs(String catalogName)
+    {
+        CatalogProperties tmpCatalogProperty = null;
+        for (CatalogProperties catalogProperty : catalogProperties) {
+            if (catalogName.equals(catalogProperty.getConnectorName())){
+                tmpCatalogProperty = catalogProperty;
+                break;
+            }
+        }
+        if (tmpCatalogProperty != null){
+            catalogProperties.remove(tmpCatalogProperty);
+        }
+        catalogFactory.deleteCatalog(catalogName);
+        catalogs.get(catalogName).shutdown();
+    }
+
+
     @Override
     public Set<String> getCatalogNames()
     {
