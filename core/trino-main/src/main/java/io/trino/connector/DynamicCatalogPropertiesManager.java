@@ -19,6 +19,8 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.airlift.log.Logger;
 import io.airlift.units.Duration;
 
+import javax.inject.Inject;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -48,6 +50,7 @@ public class DynamicCatalogPropertiesManager
     private final File catalogConfigurationDir;
     private final ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("catalog-properios-update-thread-%d").build());
 
+    @Inject
     public DynamicCatalogPropertiesManager(CatalogFactory catalogFactory, DynamicCatalogPropertiesConfig config)
     {
         super(catalogFactory, config);

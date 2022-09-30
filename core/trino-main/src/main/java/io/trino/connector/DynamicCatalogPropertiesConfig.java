@@ -30,9 +30,9 @@ public class DynamicCatalogPropertiesConfig
     }
 
     @Config("catalog.watch-timeout")
-    public DynamicCatalogPropertiesConfig setWatchTimeout(Duration watchTimeout)
+    public DynamicCatalogPropertiesConfig setWatchTimeout(String watchTimeout)
     {
-        this.watchTimeout = watchTimeout;
+        this.watchTimeout = new Duration(Double.valueOf(watchTimeout), TimeUnit.SECONDS);
         return this;
     }
 

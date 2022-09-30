@@ -30,9 +30,9 @@ public class StaticCatalogManagerModule
     public void configure(Binder binder)
     {
         configBinder(binder).bindConfig(StaticCatalogManagerConfig.class);
+        configBinder(binder).bindConfig(DynamicCatalogPropertiesConfig.class);
         binder.bind(StaticCatalogManager.class).in(Scopes.SINGLETON);
         binder.bind(DynamicCatalogPropertiesManager.class).in(Scopes.SINGLETON);
-        configBinder(binder).bindConfig(DynamicCatalogPropertiesConfig.class);
         binder.bind(CatalogManager.class).to(DynamicCatalogPropertiesManager.class).in(Scopes.SINGLETON);
         binder.bind(ConnectorServicesProvider.class).to(DynamicCatalogPropertiesManager.class).in(Scopes.SINGLETON);
 
