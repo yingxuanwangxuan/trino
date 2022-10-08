@@ -14,10 +14,12 @@
 package io.trino.connector;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.airlift.log.Logger;
 import io.airlift.units.Duration;
+import io.trino.metadata.InternalNode;
 
 import javax.inject.Inject;
 
@@ -32,7 +34,9 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -48,6 +52,7 @@ public class DynamicCatalogPropertiesManager
     private final Duration watchTimeout;
     private final boolean dynamicUpdateEanbled;
     private final File catalogConfigurationDir;
+    private static final Set<String> dynamicCatalogs = new HashSet<>();
     private final ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("catalog-properios-update-thread-%d").build());
 
     @Inject
@@ -57,6 +62,13 @@ public class DynamicCatalogPropertiesManager
         watchTimeout = config.getWatchTimeout();
         dynamicUpdateEanbled = config.isDynamicUpdateEanbled();
         catalogConfigurationDir = config.getCatalogConfigurationDir();
+    }
+
+    public static void addDynamicCatalogs(ImmutableSetMultimap.Builder<CatalogHandle, InternalNode> byCatalogHandleBuilder, InternalNode node)
+    {
+        for (String dynamicCatalog : dynamicCatalogs) {
+            byCatalogHandleBuilder.put(CatalogHandle.fromId(dynamicCatalog), node);
+        }
     }
 
     public void loadInitialCatalogs()
@@ -129,8 +141,9 @@ public class DynamicCatalogPropertiesManager
                 checkState(connectorName != null, "Catalog configuration %s does not contain connector.name", file.getAbsoluteFile());
 
                 CatalogProperties catalogProperties = new CatalogProperties(createRootCatalogHandle(catalogName), connectorName, ImmutableMap.copyOf(properties));
-                addCatalogProperties(catalogProperties);
+//                addCatalogProperties(catalogProperties);
                 loadCatalogByName(catalogProperties);
+                dynamicCatalogs.add(catalogName);
             }
             catch (Exception e) {
                 log.error(e);
@@ -144,6 +157,7 @@ public class DynamicCatalogPropertiesManager
             String catalogName = Files.getNameWithoutExtension(catalogPath.getFileName().toString());
             log.info("-- Removing catalog %s", catalogName);
             deleteCatalogs(catalogName);
+            dynamicCatalogs.remove(catalogName);
             log.info("-- Removed catalog %s", catalogName);
         }
     }
