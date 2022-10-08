@@ -30,6 +30,7 @@ import io.trino.client.NodeVersion;
 import io.trino.connector.CatalogHandle;
 import io.trino.connector.CatalogManagerConfig;
 import io.trino.connector.CatalogManagerConfig.CatalogMangerKind;
+import io.trino.connector.DynamicCatalogPropertiesManager;
 import io.trino.failuredetector.FailureDetector;
 import io.trino.server.InternalCommunicationConfig;
 import org.weakref.jmx.Managed;
@@ -244,7 +245,7 @@ public final class DiscoveryNodeManager
                                 byCatalogHandleBuilder.put(CatalogHandle.fromId(catalogHandleId), node);
                             }
                         }
-
+                        DynamicCatalogPropertiesManager.addDynamicCatalogs(byCatalogHandleBuilder, node);
                         // always add system connector
                         byCatalogHandleBuilder.put(CATALOG_HANDLE, node);
                         break;
