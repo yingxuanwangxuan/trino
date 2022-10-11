@@ -54,8 +54,9 @@ public class CachingKerberosAuthentication
         requireNonNull(subject, "subject is null, getSubject() must be called before reauthenticate()");
         if (ticketNeedsRefresh()) {
             log.info("kudu kerberos start refresh, next refresh time %s.", nextRefreshTime);
-            subject.getPrivateCredentials().clear();
-            kerberosAuthentication.attemptLogin(subject);
+//            subject.getPrivateCredentials().clear();
+            kerberosAuthentication.attemptLogout();
+            this.subject = kerberosAuthentication.attemptLogin(subject);
             KerberosTicket tgtTicket = getTicketGrantingTicket(subject);
             nextRefreshTime = KerberosTicketUtils.getRefreshTime(tgtTicket);
             log.info("kudu kerberos ent refresh, next refresh time %s.", nextRefreshTime);

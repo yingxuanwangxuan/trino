@@ -32,6 +32,8 @@ public class KerberosAuthentication
     private final KerberosPrincipal principal;
     private final Configuration configuration;
 
+    private LoginContext loginContext;
+
     public KerberosAuthentication(KerberosConfiguration kerberosConfiguration)
     {
         requireNonNull(kerberosConfiguration, "kerberosConfiguration is null");
@@ -48,6 +50,7 @@ public class KerberosAuthentication
         try {
             LoginContext loginContext = new LoginContext("", subject, null, configuration);
             loginContext.login();
+            this.loginContext = loginContext;
             return loginContext.getSubject();
         }
         catch (LoginException e) {
@@ -55,11 +58,23 @@ public class KerberosAuthentication
         }
     }
 
-    public void attemptLogin(Subject subject)
+    public Subject attemptLogin(Subject subject)
     {
         try {
             LoginContext loginContext = new LoginContext("", subject, null, configuration);
             loginContext.login();
+            this.loginContext = loginContext;
+            return loginContext.getSubject();
+        }
+        catch (LoginException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void attemptLogout()
+    {
+        try {
+            loginContext.logout();
         }
         catch (LoginException e) {
             throw new RuntimeException(e);
