@@ -31,7 +31,7 @@ public class StaticCatalogManagerModule
     {
         configBinder(binder).bindConfig(StaticCatalogManagerConfig.class);
         configBinder(binder).bindConfig(DynamicCatalogPropertiesConfig.class);
-        binder.bind(StaticCatalogManager.class).in(Scopes.SINGLETON);
+//        binder.bind(StaticCatalogManager.class).in(Scopes.SINGLETON);
         binder.bind(DynamicCatalogPropertiesManager.class).in(Scopes.SINGLETON);
         binder.bind(CatalogManager.class).to(DynamicCatalogPropertiesManager.class).in(Scopes.SINGLETON);
         binder.bind(ConnectorServicesProvider.class).to(DynamicCatalogPropertiesManager.class).in(Scopes.SINGLETON);
@@ -45,7 +45,7 @@ public class StaticCatalogManagerModule
         public LazyRegister(
                 DefaultCatalogFactory defaultCatalogFactory,
                 LazyCatalogFactory lazyCatalogFactory,
-                StaticCatalogManager catalogManager,
+                DynamicCatalogPropertiesManager catalogManager,
                 GlobalSystemConnector globalSystemConnector)
         {
             lazyCatalogFactory.setCatalogFactory(defaultCatalogFactory);
