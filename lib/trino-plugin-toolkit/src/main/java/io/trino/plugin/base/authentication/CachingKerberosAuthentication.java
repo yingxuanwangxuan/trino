@@ -13,6 +13,8 @@
  */
 package io.trino.plugin.base.authentication;
 
+import io.airlift.log.Logger;
+
 import javax.annotation.concurrent.GuardedBy;
 import javax.security.auth.Subject;
 import javax.security.auth.kerberos.KerberosTicket;
@@ -23,6 +25,8 @@ import static java.util.Objects.requireNonNull;
 public class CachingKerberosAuthentication
 {
     private final KerberosAuthentication kerberosAuthentication;
+
+    private static final Logger log = Logger.get(CachingKerberosAuthentication.class);
 
     @GuardedBy("this")
     private Subject subject;
@@ -49,9 +53,12 @@ public class CachingKerberosAuthentication
     {
         requireNonNull(subject, "subject is null, getSubject() must be called before reauthenticate()");
         if (ticketNeedsRefresh()) {
+            log.info("kudu kerberos start refresh, next refresh time %s.", nextRefreshTime);
+            subject.getPrivateCredentials().clear();
             kerberosAuthentication.attemptLogin(subject);
             KerberosTicket tgtTicket = getTicketGrantingTicket(subject);
             nextRefreshTime = KerberosTicketUtils.getRefreshTime(tgtTicket);
+            log.info("kudu kerberos ent refresh, next refresh time %s.", nextRefreshTime);
         }
     }
 
